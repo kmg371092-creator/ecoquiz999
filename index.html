@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>생태와 환경 퀴즈 🎋</title>
+<style>
+  /* 전체 레이아웃: 화면 꽉 차게 */
+  :root{
+    --bg1: #0f1724;
+    --accent1: #00e0a3; /* 민트 */
+    --accent2: #ff6b6b; /* 코랄 */
+    --accent3: #7c5cff; /* 보라 */
+    --card-bg: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    --glass: rgba(255,255,255,0.04);
+    --glass-2: rgba(255,255,255,0.02);
+    --text: #e6eef6;
+    --muted: #a6b0c3;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(124,92,255,0.12), transparent),
+                radial-gradient(900px 400px at 90% 90%, rgba(0,224,163,0.06), transparent),
+                var(--bg1);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  /* center container */
+  .wrap{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px;
+    box-sizing:border-box;
+  }
+
+  .card{
+    width:100%;
+    max-width:980px;
+    height:calc(100vh - 64px);
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border-radius:18px;
+    box-shadow: 0 10px 30px rgba(2,6,23,0.7), inset 0 1px 0 rgba(255,255,255,0.02);
+    padding:26px;
+    display:grid;
+    grid-template-rows: auto 1fr auto;
+    gap:18px;
+    overflow:hidden;
+    position:relative;
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+
+  header{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+
+  .logo .symbol{
+    width:56px;
+    height:56px;
+    border-radius:12px;
+    background: linear-gradient(135deg, var(--accent3), var(--accent1));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    font-size:20px;
+    color:white;
+    box-shadow: 0 6px 18px rgba(124,92,255,0.18);
+  }
+
+  h1{
+    font-size:20px;
+    margin:0;
+    line-height:1;
+  }
+
+  .sub{
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  /* progress bar */
+  .progress-wrap{
+    width:48%;
+    min-width:200px;
+    background:var(--glass-2);
+    height:12px;
+    border-radius:999px;
+    overflow:hidden;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+  }
+  .progress{
+    height:100%;
+    width:0%;
+    background: linear-gradient(90deg,var(--accent1),var(--accent3));
+    transition:width 450ms cubic-bezier(.2,.9,.3,1);
+  }
+
+  main{
+    padding:18px;
+    border-radius:12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    overflow:auto;
+  }
+
+  .question-area{
+    display:flex;
+    gap:18px;
+    align-items:flex-start;
+  }
+
+  .q-num{
+    min-width:68px;
+    height:68px;
+    border-radius:12px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    font-size:18px;
+    color:var(--text);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+  }
+
+  .q-box{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .q-text{
+    font-size:20px;
+    margin:0;
+    color:var(--text);
+    text-shadow: 0 1px 0 rgba(0,0,0,0.4);
+  }
+
+  .options{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:12px;
+    margin-top:4px;
+  }
+
+  .opt{
+    background:var(--glass);
+    border-radius:12px;
+    padding:12px;
+    cursor:pointer;
+    user-select:none;
+    transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+    border:1px solid rgba(255,255,255,0.02);
+    box-shadow: 0 6px 16px rgba(2,6,23,0.5);
+    font-weight:600;
+  }
+  .opt:hover{ transform: translateY(-4px); }
+  .opt.correct{
+    outline: 3px solid rgba(0,224,163,0.12);
+    background: linear-gradient(90deg, rgba(0,224,163,0.12), rgba(124,92,255,0.06));
+    box-shadow: 0 12px 28px rgba(0,224,163,0.06);
+  }
+  .opt.wrong{
+    outline: 3px solid rgba(255,107,107,0.08);
+    background: linear-gradient(90deg, rgba(255,107,107,0.06), rgba(124,92,255,0.02));
+  }
+  .opt.disabled{
+    cursor:default;
+    opacity:0.8;
+    transform:none;
+  }
+
+  .explain{
+    font-size:14px;
+    color:var(--muted);
+    margin-top:6px;
+  }
+
+  footer{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  .controls{
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
+
+  .btn{
+    background: linear-gradient(90deg,var(--accent2),var(--accent3));
+    border:none;
+    color:white;
+    padding:10px 14px;
+    border-radius:10px;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow: 0 8px 30px rgba(124,92,255,0.12);
+    transition: transform 120ms ease, opacity 120ms ease;
+  }
+  .btn:active{ transform: translateY(2px); }
+  .btn.ghost{
+    background: transparent;
+    border:1px solid rgba(255,255,255,0.06);
+    color:var(--text);
+    font-weight:600;
+    box-shadow:none;
+  }
+
+  .score-panel{
+    text-align:right;
+  }
+  .score{
+    font-size:18px;
+    font-weight:800;
+  }
+  .small{
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  /* responsive */
+  @media (max-width:720px){
+    .options{
+      grid-template-columns: 1fr;
+    }
+    .progress-wrap{ width:38%; }
+    .card{ padding:18px; border-radius:10px; height:calc(100vh - 36px); }
+    h1{ font-size:18px; }
+  }
+
+  /* fun floating leaves in corners */
+  .leaf{
+    position:absolute;
+    width:160px;
+    height:160px;
+    border-radius:50%;
+    filter:blur(22px);
+    opacity:0.12;
+    transform:translate3d(0,0,0);
+  }
+  .leaf.l1{ right:-40px; top:-40px; background:linear-gradient(135deg,#00e0a3,#7c5cff); }
+  .leaf.l2{ left:-60px; bottom:-60px; background:linear-gradient(135deg,#ff6b6b,#7c5cff); opacity:0.10; transform:rotate(32deg); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card" role="application" aria-labelledby="appTitle">
+    <div class="leaf l1" aria-hidden="true"></div>
+    <div class="leaf l2" aria-hidden="true"></div>
+
+    <header>
+      <div class="logo">
+        <div class="symbol" aria-hidden="true">🌱</div>
+        <div>
+          <h1 id="appTitle">생태 & 환경 퀴즈</h1>
+          <div class="sub">초등학생 수준 — 재미있게 풀어봐요!</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div class="progress-wrap" aria-hidden="true">
+          <div class="progress" id="progressBar" style="width:0%"></div>
+        </div>
+        <div class="small" id="qCount">1 / 10</div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="question-area" id="questionArea">
+        <div class="q-num" id="qNum">Q1</div>
+        <div class="q-box">
+          <div class="q-text" id="qText">문제가 여기에 나옵니다.</div>
+          <div class="options" id="options" role="list"></div>
+          <div class="explain" id="explain" aria-live="polite"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="controls">
+        <button class="btn ghost" id="prevBtn" aria-label="이전문제">← 이전</button>
+        <button class="btn" id="nextBtn" aria-label="다음문제">다음 →</button>
+        <button class="btn ghost" id="restartBtn" aria-label="다시시작">처음으로</button>
+      </div>
+      <div class="score-panel">
+        <div class="small">점수</div>
+        <div class="score" id="score">0</div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script>
+/* 퀴즈 데이터 (10문제, 초등학생 수준) */
+const questions = [
+  {
+    q: "1. 식물은 무엇을 만들어서 우리에게 산소를 주나요?",
+    options: ["물", "산소", "이산화탄소", "빛"],
+    answer: 1,
+    explain: "식물은 광합성을 통해 이산화탄소와 물을 사용해 **산소**와 당을 만듭니다."
+  },
+  {
+    q: "2. 쓰레기를 분리수거할 때 종이는 어느 재활용 통에 넣을까요?",
+    options: ["유리통", "플라스틱통", "종이통", "음식물통"],
+    answer: 2,
+    explain: "종이는 깨끗하게 접어 **종이 재활용 통**에 넣어야 해요."
+  },
+  {
+    q: "3. 지구가 점점 더워지는 현상을 뭐라고 하나요?",
+    options: ["계절", "지구온난화", "강수량", "지각운동"],
+    answer: 1,
+    explain: "지구 평균 기온이 오르는 현상을 **지구온난화**라고 불러요."
+  },
+  {
+    q: "4. 물을 아끼기 위한 좋은 행동은 무엇일까요?",
+    options: ["양치할 때 물 틀어놓기", "샤워 길게 하기", "설거지할 때 물 받아 쓰기", "호수에 쓰레기 버리기"],
+    answer: 2,
+    explain: "물을 받아서 쓰면 물을 절약할 수 있어요. (설거지할 때처럼)"
+  },
+  {
+    q: "5. 나무를 많이 심는 것이 좋은 이유는?",
+    options: ["공기가 더러워진다", "동물이 집을 잃는다", "산소를 만들어주고 그늘을 준다", "비를 막는다"],
+    answer: 2,
+    explain: "나무는 **산소를 만들고** 동물의 쉼터가 되며 온도를 낮춰요."
+  },
+  {
+    q: "6. 바다에 플라스틱이 많으면 해양 생물에게 무슨 일이 생길까요?",
+    options: ["더 건강해진다", "플라스틱을 먹고 아플 수 있다", "하늘로 날아간다", "물고기가 커진다"],
+    answer: 1,
+    explain: "플라스틱을 잘못 먹으면 동물이 아프거나 목숨을 잃을 수 있어요."
+  },
+  {
+    q: "7. 전기를 아끼는 좋은 방법은?",
+    options: ["밤에 불 끄기", "텔레비전 계속 켜놓기", "폰 충전 계속하기", "불필요한 등 키기"],
+    answer: 0,
+    explain: "사용하지 않을 때 **불을 끄는 것**이 전기를 아끼는 쉬운 방법이에요."
+  },
+  {
+    q: "8. '생태계'는 무엇을 뜻할까요?",
+    options: ["동물과 식물이 서로 어울려 사는 곳", "사람들만 사는 마을", "자동차가 많은 곳", "우주"],
+    answer: 0,
+    explain: "생태계는 **생물들과 환경 요소들이 서로 영향을 주며 사는 곳**이에요."
+  },
+  {
+    q: "9. 에너지를 태워서 많이 쓰면 어떤 문제가 생길까요?",
+    options: ["공기가 더 깨끗해진다", "이산화탄소가 늘어나 지구가 더워진다", "나무가 더 많이 자란다", "바다가 줄어든다"],
+    answer: 1,
+    explain: "화석연료를 많이 쓰면 **이산화탄소**가 늘어나 지구온난화를 촉진할 수 있어요."
+  },
+  {
+    q: "10. 환경을 지키려면 무엇을 실천하면 좋을까요?",
+    options: ["일회용품 줄이기", "길거리에 쓰레기 버리기", "물을 낭비하기", "나무 베기"],
+    answer: 0,
+    explain: "일회용품을 줄이고 재사용하면 쓰레기를 줄이고 환경을 보호할 수 있어요."
+  }
+];
+
+/* 상태 */
+let cur = 0;
+let score = 0;
+let answered = Array(questions.length).fill(false);
+
+/* DOM */
+const qNum = document.getElementById('qNum');
+const qText = document.getElementById('qText');
+const optionsEl = document.getElementById('options');
+const explainEl = document.getElementById('explain');
+const progressBar = document.getElementById('progressBar');
+const qCount = document.getElementById('qCount');
+const scoreEl = document.getElementById('score');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const restartBtn = document.getElementById('restartBtn');
+
+/* 초기화 및 렌더 */
+function render(){
+  const item = questions[cur];
+  qNum.textContent = `Q${cur+1}`;
+  qText.textContent = item.q;
+  qCount.textContent = `${cur+1} / ${questions.length}`;
+  progressBar.style.width = `${Math.round((cur/ (questions.length)) * 100)}%`;
+  explainEl.textContent = answered[cur] ? item.explain : '';
+  optionsEl.innerHTML = '';
+  item.options.forEach((opt, idx) => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.type = 'button';
+    b.setAttribute('role','listitem');
+    b.setAttribute('data-index', idx);
+    b.tabIndex = 0;
+    b.innerHTML = `<div style="font-size:15px">${String.fromCharCode(65+idx)}. ${opt}</div>`;
+    // disable if already answered
+    if(answered[cur]){
+      b.classList.add('disabled');
+      if(idx === item.answer) b.classList.add('correct');
+      if(selectedIndex[cur] !== null && idx === selectedIndex[cur] && idx !== item.answer) b.classList.add('wrong');
+    } else {
+      b.addEventListener('click', onChoose);
+      b.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); b.click(); }
+      });
+    }
+    optionsEl.appendChild(b);
+  });
+
+  // prev/next disable logic
+  prevBtn.disabled = (cur === 0);
+  nextBtn.disabled = (cur === questions.length - 1);
+  updateScore();
+}
+
+/* 선택 추적 */
+let selectedIndex = Array(questions.length).fill(null);
+
+function onChoose(e){
+  const idx = Number(e.currentTarget.dataset.index);
+  const item = questions[cur];
+  // Prevent double answer
+  if(answered[cur]) return;
+  answered[cur] = true;
+  selectedIndex[cur] = idx;
+
+  // mark options
+  const buttons = optionsEl.querySelectorAll('.opt');
+  buttons.forEach((btn) => btn.classList.add('disabled'));
+  // correct
+  if(idx === item.answer){
+    // correct!
+    e.currentTarget.classList.add('correct');
+    score += 10; // 각 문제 10점
+    popConfetti();
+  } else {
+    e.currentTarget.classList.add('wrong');
+    // highlight correct
+    const correctBtn = optionsEl.querySelector(`.opt[data-index="${item.answer}"]`);
+    if(correctBtn) correctBtn.classList.add('correct');
+  }
+
+  explainEl.textContent = item.explain;
+  updateScore();
+}
+
+/* 이동 */
+prevBtn.addEventListener('click', ()=> {
+  if(cur>0) { cur--; render(); }
+});
+nextBtn.addEventListener('click', ()=> {
+  if(cur < questions.length - 1) { cur++; render(); }
+});
+restartBtn.addEventListener('click', ()=> {
+  if(!confirm('처음부터 다시 시작할까요?')) return;
+  cur = 0;
+  score = 0;
+  answered = Array(questions.length).fill(false);
+  selectedIndex = Array(questions.length).fill(null);
+  render();
+});
+
+/* 키보드: 좌우로 탐색 */
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'ArrowRight') nextBtn.click();
+  if(e.key === 'ArrowLeft') prevBtn.click();
+});
+
+/* 점수 업데이트 */
+function updateScore(){
+  scoreEl.textContent = score;
+  // progress end fill
+  if(cur === questions.length - 1){
+    progressBar.style.width = '100%';
+  }
+}
+
+/* 간단한 축하 효과: 캔버스에 confetti (작고 가벼운 구현) */
+function popConfetti(){
+  const conf = document.createElement('canvas');
+  conf.style.position = 'fixed';
+  conf.style.left = 0;
+  conf.style.top = 0;
+  conf.width = window.innerWidth;
+  conf.height = window.innerHeight;
+  conf.style.pointerEvents = 'none';
+  document.body.appendChild(conf);
+  const ctx = conf.getContext('2d');
+  let parts = [];
+  const colors = ['#FF6B6B','#00E0A3','#7C5CFF','#FFD166','#FF9F1C'];
+  for(let i=0;i<60;i++){
+    parts.push({
+      x: Math.random()*conf.width,
+      y: Math.random()*conf.height*0.4,
+      vx: (Math.random()-0.5)*6,
+      vy: 2+Math.random()*6,
+      size: 4+Math.random()*8,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      rot: Math.random()*Math.PI*2,
+      vro: (Math.random()-0.5)*0.2
+    });
+  }
+  let frames = 0;
+  function frame(){
+    frames++;
+    ctx.clearRect(0,0,conf.width,conf.height);
+    parts.forEach(p=>{
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.12; // gravity
+      p.rot += p.vro;
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+      ctx.restore();
+    });
+    if(frames < 90){
+      requestAnimationFrame(frame);
+    } else {
+      document.body.removeChild(conf);
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+/* 처음 렌더 */
+render();
+
+/* 모바일에서 스크롤 시 자연스럽게 보이도록 */
+(function setHeightCSS() {
+  // CSS로 100vh가 모바일에서 문제일 때 대비
+  function update(){
+    document.documentElement.style.setProperty('--vh', window.innerHeight/100 + 'px');
+  }
+  update();
+  window.addEventListener('resize', update);
+})();
+</script>
+</body>
+</html>
